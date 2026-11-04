@@ -26,3 +26,16 @@ data Linha = Linha {
     golsPro :: Int,   -- gols que o time marcou
     golsContra :: Int    -- gols que o time sofreu
   } deriving (Show, Eq)  -- libera print e == para Linha
+
+participou :: Time -> Partida -> Bool
+participou t p = mandante p == t || visitante p == t
+
+resultadoPara :: Time -> Partida -> Maybe Resultado -- Maybe pq pode não ter resultado
+resultadoPara t p 
+    | not (participou t p) = Nothing
+    | feitos > sofridos = Just Vitoria
+    | sofridos > feitos = Just Derrota  
+    | otherwise = Just Empate
+    where 
+        feitos = if t == mandante p then golsMandante p else golsVisitante p
+        sofridos = if t == mandante p then golsVisitante p else golsMandante p
