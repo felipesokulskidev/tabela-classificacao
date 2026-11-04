@@ -1,5 +1,7 @@
 module Tipos where
 
+import Data.List (nub, sort)
+
 type Time = String -- Time é outro nome para String
 
 data Resultado -- data cria um tipo novo, Resultado nome do tipo
@@ -39,3 +41,6 @@ resultadoPara t p
     where 
         feitos = if t == mandante p then golsMandante p else golsVisitante p
         sofridos = if t == mandante p then golsVisitante p else golsMandante p
+
+times :: [Partida] -> [Time]
+times ps = sort (nub(map mandante ps ++ map visitante ps)) -- nub retira os repetidos e sort ordena
