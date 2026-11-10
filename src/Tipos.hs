@@ -29,9 +29,11 @@ data Linha = Linha {
     golsContra :: Int    -- gols que o time sofreu
   } deriving (Show, Eq)  -- libera print e == para Linha
 
+-- verdadeiro se o time jogou a partida
 participou :: Time -> Partida -> Bool
 participou t p = mandante p == t || visitante p == t
 
+-- resultado da partida variando de acordo com o time
 resultadoPara :: Time -> Partida -> Maybe Resultado -- Maybe pq pode não ter resultado
 resultadoPara t p 
     | not (participou t p) = Nothing
@@ -42,5 +44,6 @@ resultadoPara t p
         feitos = if t == mandante p then golsMandante p else golsVisitante p
         sofridos = if t == mandante p then golsVisitante p else golsMandante p
 
+-- Lista de times do campeonato, ordenado e sem repetições
 times :: [Partida] -> [Time]
 times ps = sort (nub(map mandante ps ++ map visitante ps)) -- nub retira os repetidos e sort ordena
