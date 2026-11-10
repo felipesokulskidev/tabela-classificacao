@@ -41,8 +41,16 @@ resultadoPara t p
     | sofridos > feitos = Just Derrota  
     | otherwise = Just Empate
     where 
-        feitos = if t == mandante p then golsMandante p else golsVisitante p
-        sofridos = if t == mandante p then golsVisitante p else golsMandante p
+        feitos = golsFeitos t p
+        sofridos = golsSofridos t p
+
+-- calcula gols feitos na função resultadoPara (feito para otimizar código)
+golsFeitos :: Time -> Partida -> Int
+golsFeitos t p = if t == mandante p then golsMandante p else golsVisitante p
+
+-- mesma coisa com gols sofridos
+golsSofridos :: Time -> Partida -> Int
+golsSofridos t p = if t == mandante p then golsVisitante p else golsMandante p
 
 -- Lista de times do campeonato, ordenado e sem repetições
 times :: [Partida] -> [Time]
