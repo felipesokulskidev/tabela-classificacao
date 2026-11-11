@@ -37,3 +37,10 @@ linhaDoTime ps t = foldl somarPartida inicial ps
 pontosLinha, saldo :: Linha -> Int
 pontosLinha l = vitorias l * pontos Vitoria + empates l * pontos Empate -- 3 pontos p/ vitória e 1 p/ empate (reaproveita a func pontos)
 saldo l = golsPro l - golsContra l -- gols pró - gols contra
+
+
+-- % dos pontos disputados q o time conquistou (0 se n jogou)
+aproveitamento :: Linha -> Double
+aproveitamento l
+    | jogos l == 0 = 0
+    | otherwise    = fromIntegral (pontosLinha l) / fromIntegral (jogos l * pontos Vitoria) * 100
