@@ -58,3 +58,11 @@ classificacao ps = sortBy criterios (map (linhaDoTime ps) (times ps))
                  <> comparing (Down . vitorias) -- 2o + vitórias
                  <> comparing (Down . saldo) -- 3o mlr saldo d gols
                  <> comparing (Down . golsPro) -- 4o + gols pro
+
+
+
+-- só as partidas até a rodada n 
+ateRodada :: Int -> [Partida] -> [Partida]
+ateRodada n ps = filter ateN ps
+    where
+        ateN p = rodada p <= n -- a partida fica se a rodada dela é <= n
