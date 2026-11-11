@@ -30,3 +30,10 @@ linhaDoTime ps t = foldl somarPartida inicial ps
                               , golsPro    = golsPro l + golsFeitos t p
                               , golsContra = golsContra l + golsSofridos t p
                               }
+
+
+
+-- pts ganhos e saldo de gols d uma linha da table
+pontosLinha, saldo :: Linha -> Int
+pontosLinha l = vitorias l * pontos Vitoria + empates l * pontos Empate -- 3 pontos p/ vitória e 1 p/ empate (reaproveita a func pontos)
+saldo l = golsPro l - golsContra l -- gols pró - gols contra
