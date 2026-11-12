@@ -76,6 +76,14 @@ maiorGoleada :: [Partida] -> Maybe Partida
 maiorGoleada [] = Nothing
 maiorGoleada ps = Just (maximumBy(comparing diferenca) ps)
 
+--funcao de gols marcados numa parttida(mandante + visitante)
+golsPartida :: Partida -> Int
+golsPartida p = golsMandante p + golsVisitante p
+
+mediaGols :: [Partida] -> Maybe Double
+mediaGols [] = Nothing
+mediaGols ps = Just(fromIntegral (sum(map golsPartida ps)) / fromIntegral (length ps))
+
 
 
 
