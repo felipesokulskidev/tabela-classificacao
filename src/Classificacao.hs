@@ -1,9 +1,10 @@
 module Classificacao where
 
-import Data.List (sortBy)
+import Data.List (sortBy, maximumBy)
 import Data.Ord (comparing, Down(..))
 import Tipos
-import Tipos
+
+
 
 -- retorna os pontos de acordo com o resultado
 pontos :: Resultado -> Int
@@ -66,3 +67,16 @@ ateRodada :: Int -> [Partida] -> [Partida]
 ateRodada n ps = filter ateN ps
     where
         ateN p = rodada p <= n -- a partida fica se a rodada dela é <= n
+
+--funcao de diferenca usada por maiorGoleada
+diferenca :: Partida -> Int
+diferenca p = abs(golsMandante p - golsVisitante p)
+
+maiorGoleada :: [Partida] -> Maybe Partida
+maiorGoleada [] = Nothing
+maiorGoleada ps = Just (maximumBy(comparing diferenca) ps)
+
+
+
+
+
