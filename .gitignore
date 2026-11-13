@@ -2,3 +2,4 @@ build/
 campeonato
 *.hi
 *.o
+*.exe
