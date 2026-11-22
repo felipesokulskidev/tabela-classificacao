@@ -1,6 +1,7 @@
 module Leitura where
 
 import Tipos
+import Text.Read (readMaybe)
 
 -- erros possiveis na leitura do texto
 data Erro
@@ -20,3 +21,20 @@ separar sep texto = foldr passo [""] texto
             | otherwise = case acc of
                 (atual : resto) -> (c : atual) : resto -- gruda a letra no campo atual
                 []              -> [[c]] -- nunca acontece, mas o -Wall exige
+--Função auxiliar de lerPartida
+lerNumero :: Int -> String -> Either Erro Int
+lerNumero n s = maybe (Left(NumeroInvalido n)) Right (readMaybe s)
+
+
+lerPartida :: Int -> String -> Either Erro Partida
+lerPartida n linha = do
+    (r, m, gm, gv, v) <- cincoCampos (separar ';' linha)
+    rod   <- lerNumero n r
+    golsM <- lerNumero n gm
+    golsV <- lerNumero n gv
+    if golsM < 0 || golsV < 0 then Left (PlacarNegativo n) else Right ()
+    if m == v then Left (MesmoTime n) else Right ()
+    return (Partida rod m golsM golsV v)
+    where
+        cincoCampos [a, b, c, d, e] = Right (a, b, c, d, e)
+        cincoCampos _               = Left (CamposInvalidos n)
