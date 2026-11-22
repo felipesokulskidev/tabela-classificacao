@@ -2,6 +2,8 @@ module Leitura where
 
 import Tipos
 import Text.Read (readMaybe)
+import Data.List (nub, (\\))
+
 
 -- erros possiveis na leitura do texto
 data Erro
@@ -38,3 +40,24 @@ lerPartida n linha = do
     where
         cincoCampos [a, b, c, d, e] = Right (a, b, c, d, e)
         cincoCampos _               = Left (CamposInvalidos n)
+
+-- numera as linhas e joga fora as vazias e comentarios
+linhasUteis :: String -> [(Int, String)]
+linhasUteis texto = filter (ehUtil . snd) (zip [1 ..] (lines texto))
+    where
+        ehUtil linha = not (null linha) && take 1 linha /= "#"
+
+-- ve se algum time aparece duas vezes na mesma rodada
+verificarRodadas :: [Partida] -> Either Erro ()
+verificarRodadas partidas = case repetidos of
+    []            -> Right ()
+    ((rod, nomeTime) : _)  -> Left (TimeRepetidoNaRodada rod nomeTime)
+    where
+        pares     = concatMap (\p -> [(rodada p, mandante p), (rodada p, visitante p)]) partidas
+        repetidos = pares \\ nub pares
+-- lê o texto todo, parando no primeiro erro
+lerCampeonato :: String -> Either Erro [Partida]
+lerCampeonato texto = do
+    partidas <- traverse (uncurry lerPartida) (linhasUteis texto)
+    verificarRodadas partidas
+    return partidas
