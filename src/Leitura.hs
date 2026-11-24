@@ -4,6 +4,7 @@ import Tipos
 import Text.Read (readMaybe)
 import Data.List (nub, (\\))
 import Classificacao (pontosLinha, saldo)
+import Text.Printf (printf)
 
 
 -- erros possiveis na leitura do texto
@@ -85,3 +86,19 @@ tabelaFormatada linhas = unlines (cabecalho : zipWith formatarLinha [1 :: Int ..
         cabecalho = montar "Pos" "Time" ["Pts", "J", "V", "E", "D", "SG"]
         formatarLinha pos l = montar (show pos) (time l) (map show [pontosLinha l, jogos l, vitorias l, empates l, derrotas l, saldo l])
         montar pos nome numeros = preencher 5 pos ++ preencher 14 nome ++ concatMap (preencher 5) numeros
+
+-- texto legivel pra cada erro, no lugar do show
+mensagemErro :: Erro -> String
+mensagemErro (CamposInvalidos n) = "Linha " ++ show n ++ ": a linha precisa ter 5 campos separados por ';'"
+mensagemErro (NumeroInvalido n) = "Linha " ++ show n ++ ": a rodada ou o placar nao e um numero"
+mensagemErro (PlacarNegativo n) = "Linha " ++ show n ++ ": o placar nao pode ser negativo"
+mensagemErro (MesmoTime n)= "Linha " ++ show n ++ ": um time nao pode jogar contra ele mesmo"
+mensagemErro (TimeRepetidoNaRodada r t) = "Rodada " ++ show r ++ ": " ++ t ++ " aparece em mais de uma partida"
+
+-- partida no formato "Vasco 7 x 1 AthleticoPR (rodada 1)"
+formatarPartida :: Partida -> String
+formatarPartida p = mandante p ++ " " ++ show (golsMandante p) ++ " x " ++ show (golsVisitante p) ++ " " ++ visitante p ++ " (rodada " ++ show (rodada p) ++ ")"
+
+-- numero com 2 casas decimais 
+duasCasas :: Double -> String
+duasCasas = printf "%.2f"
