@@ -61,3 +61,14 @@ lerCampeonato texto = do
     partidas <- traverse (uncurry lerPartida) (linhasUteis texto)
     verificarRodadas partidas
     return partidas
+
+
+-- relatório com todos os erros do txt, e n só o 1o
+todosOsErros :: String -> [Erro]
+todosOsErros texto = errosLinhas ++ errosRodadas
+    where
+        resultados   = [lerPartida n linha | (n, linha) <- linhasUteis texto] -- tenta ler cada linha
+        errosLinhas  = [e | Left e <- resultados] -- linhas c erro
+        partidas     = [p | Right p <- resultados] -- linhas validas
+        pares        = concatMap (\p -> [(rodada p, mandante p), (rodada p, visitante p)]) partidas
+        errosRodadas = [TimeRepetidoNaRodada r t | (r, t) <- nub (pares \\ nub pares)]
