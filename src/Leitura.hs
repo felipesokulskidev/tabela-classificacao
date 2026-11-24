@@ -3,6 +3,7 @@ module Leitura where
 import Tipos
 import Text.Read (readMaybe)
 import Data.List (nub, (\\))
+import Classificacao (pontosLinha, saldo)
 
 
 -- erros possiveis na leitura do texto
@@ -72,3 +73,15 @@ todosOsErros texto = errosLinhas ++ errosRodadas
         partidas     = [p | Right p <- resultados] -- linhas validas
         pares        = concatMap (\p -> [(rodada p, mandante p), (rodada p, visitante p)]) partidas
         errosRodadas = [TimeRepetidoNaRodada r t | (r, t) <- nub (pares \\ nub pares)]
+
+-- completa o txt c espaç a direita ate ter n chars
+preencher :: Int -> String -> String
+preencher n texto = texto ++ replicate (n - length texto) ' '
+
+-- tabela pronta p/ printar header + 1 linha p/ cada time
+tabelaFormatada :: [Linha] -> String
+tabelaFormatada linhas = unlines (cabecalho : zipWith formatarLinha [1 :: Int ..] linhas)
+    where
+        cabecalho = montar "Pos" "Time" ["Pts", "J", "V", "E", "D", "SG"]
+        formatarLinha pos l = montar (show pos) (time l) (map show [pontosLinha l, jogos l, vitorias l, empates l, derrotas l, saldo l])
+        montar pos nome numeros = preencher 5 pos ++ preencher 14 nome ++ concatMap (preencher 5) numeros
