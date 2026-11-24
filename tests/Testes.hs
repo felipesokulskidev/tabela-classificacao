@@ -23,6 +23,18 @@ vasco = linhaDoTime campeonatoTeste "Vasco"
 flu :: Linha
 flu = linhaDoTime campeonatoTeste "Fluminense"
 
+-- tabela final esperada
+-- Linha time jogos vitorias empates derrotas golsPro golsContra
+tabelaEsperada :: [Linha]
+tabelaEsperada =
+    [ Linha "Corinthians" 5 3 2 0 8 4
+    , Linha "Coritiba"    5 2 3 0 5 2
+    , Linha "Vasco"       5 2 1 2 11 6
+    , Linha "Fluminense"  5 2 1 2 7 7
+    , Linha "Flamengo"    5 1 1 3 4 6
+    , Linha "AthleticoPR" 5 1 0 4 5 15
+    ]
+
 main :: IO ()
 main = do
     putStrLn "--- Camada 1 ---"
@@ -38,11 +50,15 @@ main = do
     
     putStrLn "--- Camada 2 ---"
 
-    -- tabela final conferida a mao
-    testar "classificacao final" (map time (classificacao campeonatoTeste)) ["Corinthians","Coritiba","Vasco","Fluminense","Flamengo","AthleticoPR"]
+     -- tabela final inteira: ordem, jogos, vitorias, empates, derrotas e gols
+    testar "classificacao final" (classificacao campeonatoTeste) tabelaEsperada
+    testar "pontos da tabela" (map pontosLinha (classificacao campeonatoTeste)) [11, 9, 7, 7, 4, 3]
 
-    -- vasco e flu tem 7 pontos e 2 vitorias, o saldo decide
-    testar "desempate saldo" (map saldo [vasco, flu]) [5, 0]
+    -- vasco e flu: 1o e 2o criterio empatam, o 3o (saldo) decide
+    testar "desempate pontos empatam" (map pontosLinha [vasco, flu]) [7, 7]
+    testar "desempate vitorias empatam" (map vitorias [vasco, flu]) [2, 2]
+    testar "desempate saldo decide" (map saldo [vasco, flu]) [5, 0]
+
     testar "desempate ordem" (filter (`elem` ["Vasco","Fluminense"]) (map time (classificacao campeonatoTeste))) ["Vasco","Fluminense"]
 
     -- tabela ate a rodada 3, diferente da final
