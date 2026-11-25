@@ -82,6 +82,8 @@ main = do
     testar "erro NumeroInvalido" (lerPartida 2 "1;Vasco;dois;1;Flamengo") (Left (NumeroInvalido 2))
     testar "erro PlacarNegativo" (lerPartida 4 "2;Vasco;-1;0;Coritiba") (Left (PlacarNegativo 4))
     testar "erro MesmoTime" (lerPartida 5 "3;Flamengo;1;1;Flamengo") (Left (MesmoTime 5))
+    testar "erro NomeVazio" (lerPartida 6 "1;;2;1;Flamengo") (Left (NomeVazio 6))
+    testar "erro RodadaInvalida" (lerPartida 7 "0;Vasco;2;1;Flamengo") (Left (RodadaInvalida 7))
     testar "erro TimeRepetidoNaRodada" (lerCampeonato (unlines ["4;Vasco;1;0;Coritiba","4;Vasco;2;2;Fluminense"])) (Left (TimeRepetidoNaRodada 4 "Vasco"))
 
     -- texto certo da o mesmo campeonato da lista

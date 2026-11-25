@@ -14,6 +14,8 @@ data Erro
     | PlacarNegativo Int -- linha com gols negativos
     | MesmoTime Int -- linha com um time jogando contra si mesmo
     | TimeRepetidoNaRodada Int Time -- rodada em que o time aparece mais de uma vez
+    | NomeVazio Int -- linha com nome de time vazio
+    | RodadaInvalida Int -- linha com rodada <= 0
     deriving (Show, Eq) -- Show: permite imprimir; Eq: permite comparar com ==
 
 -- quebra o texto em pedacos sempre que encontra o separador
@@ -36,8 +38,10 @@ lerPartida n linha = do
     rod   <- lerNumero n r
     golsM <- lerNumero n gm
     golsV <- lerNumero n gv
-    if golsM < 0 || golsV < 0 then Left (PlacarNegativo n) else Right ()
-    if m == v then Left (MesmoTime n) else Right ()
+    if golsM < 0 || golsV < 0 then Left (PlacarNegativo n)  else Right ()
+    if m == v                  then Left (MesmoTime n)       else Right ()
+    if null m || null v        then Left (NomeVazio n)        else Right ()
+    if rod <= 0                then Left (RodadaInvalida n)   else Right ()
     return (Partida rod m golsM golsV v)
     where
         cincoCampos [a, b, c, d, e] = Right (a, b, c, d, e)
@@ -92,8 +96,10 @@ mensagemErro :: Erro -> String
 mensagemErro (CamposInvalidos n) = "Linha " ++ show n ++ ": a linha precisa ter 5 campos separados por ';'"
 mensagemErro (NumeroInvalido n) = "Linha " ++ show n ++ ": a rodada ou o placar nao e um numero"
 mensagemErro (PlacarNegativo n) = "Linha " ++ show n ++ ": o placar nao pode ser negativo"
-mensagemErro (MesmoTime n)= "Linha " ++ show n ++ ": um time nao pode jogar contra ele mesmo"
+mensagemErro (MesmoTime n)              = "Linha " ++ show n ++ ": um time nao pode jogar contra ele mesmo"
 mensagemErro (TimeRepetidoNaRodada r t) = "Rodada " ++ show r ++ ": " ++ t ++ " aparece em mais de uma partida"
+mensagemErro (NomeVazio n)              = "Linha " ++ show n ++ ": o nome do time nao pode ser vazio"
+mensagemErro (RodadaInvalida n)         = "Linha " ++ show n ++ ": o numero da rodada deve ser maior que zero"
 
 -- partida no formato "Vasco 7 x 1 AthleticoPR (rodada 1)"
 formatarPartida :: Partida -> String
